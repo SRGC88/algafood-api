@@ -22,7 +22,7 @@ public class FormaPagamento {
 	
 	
 	@Column(nullable = false)
-	private String desccricao;
+	private String descricao;
 	
 	
 }
