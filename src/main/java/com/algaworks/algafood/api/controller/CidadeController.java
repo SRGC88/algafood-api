@@ -53,17 +53,17 @@ public class CidadeController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Cidade adicionar(@RequestBody Cidade cidade){
-		cadastroEstado.buscarOuFalhar(cidade.getEstado().getId());
 		return cadastroCidade.salvar(cidade);	
 	}
 	
 	@PutMapping("/{cidadeId}")
 	public Cidade atualizar(@PathVariable Long cidadeId, @RequestBody Cidade cidade) {
-		cadastroEstado.buscarOuFalhar(cidade.getEstado().getId());
+		
 		Cidade cidadeAtual = cadastroCidade.buscarOuFalhar(cidadeId);
 		 
-				 BeanUtils.copyProperties(cidade, cidadeAtual, "id");
-				 return cidade = cadastroCidade.salvar(cidadeAtual);
+		BeanUtils.copyProperties(cidade, cidadeAtual, "id");
+		
+		return cidade = cadastroCidade.salvar(cidadeAtual);
 	}
 	
 	@DeleteMapping("/{cidadeId}")
@@ -73,6 +73,4 @@ public class CidadeController {
 		
 	}
 		
-	
-
 }

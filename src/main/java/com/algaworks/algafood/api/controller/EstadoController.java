@@ -58,10 +58,10 @@ public class EstadoController {
 	public Estado atualizar(@PathVariable Long estadoId, @RequestBody Estado estado){
 		Estado estadoAtual = cadastroEstado.buscarOuFalhar(estadoId);
 		 
-			// Copia o estado recebido para dentro de estadoAtual, ignorando a propriedade id
-			 BeanUtils.copyProperties(estado, estadoAtual, "id");
+		// Copia o estado recebido para dentro de estadoAtual, ignorando a propriedade id
+		BeanUtils.copyProperties(estado, estadoAtual, "id");
 			 
-			 return estadoRepository.save(estadoAtual);
+		return estadoRepository.save(estadoAtual);
 	}
 	
 	@DeleteMapping("/{estadoId}")
