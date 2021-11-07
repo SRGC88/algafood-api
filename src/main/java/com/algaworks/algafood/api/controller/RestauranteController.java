@@ -3,12 +3,15 @@ package com.algaworks.algafood.api.controller;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+//import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -20,13 +23,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.algaworks.algafood.domain.exception.CozinhaNaoEncontradaException;
-import com.algaworks.algafood.domain.exception.EntidadeNaoEncontradaException;
 import com.algaworks.algafood.domain.exception.NegocioException;
-import com.algaworks.algafood.domain.model.Cozinha;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
-import com.algaworks.algafood.domain.service.CadastroCozinhaService;
 import com.algaworks.algafood.domain.service.CadastroRestauranteService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -85,33 +86,46 @@ public class RestauranteController {
 	}
 	
 	@PatchMapping("/{restauranteId}")
-	public Restaurante atualizarParcial(@PathVariable Long restauranteId, @RequestBody Map<String, Object> campos){
+	public Restaurante atualizarParcial(@PathVariable Long restauranteId, 
+			@RequestBody Map<String, Object> campos, HttpServletRequest request){
 		
 		Restaurante restauranteAtual = cadastroRestaurante.buscarOuFalhar(restauranteId);
 		
-		merge(campos, restauranteAtual);
+		merge(campos, restauranteAtual, request);
 		
 		return atualizar(restauranteId, restauranteAtual);
 		
 	}
 
-	private void merge(Map<String, Object> dadosOrigem, Restaurante restauranteDestino) {
-		ObjectMapper objectMapper = new ObjectMapper();
-		Restaurante restauranteOrigem = objectMapper.convertValue(dadosOrigem, Restaurante.class);//mapper que faz a conversão dos valores passados no json
+	private void merge(Map<String, Object> dadosOrigem, Restaurante restauranteDestino, HttpServletRequest request) {
 		
-		System.out.println(restauranteOrigem);
+		ServletServerHttpRequest servletServerHttpRequest = new ServletServerHttpRequest (request);
 		
-		dadosOrigem.forEach((nomePropriedade,valorPropriedade) -> {
-			Field field = ReflectionUtils.findField(Restaurante.class, nomePropriedade);//Busca a propriedade na classe Restaurante, pelo nome que vem no mapa
-			field.setAccessible(true);//modo de permitir o acesso a um atributo privado de outra classe, para que seja possível setar o valor com o método setField
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES,true);
+			objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
 			
-			Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);//Pega os valores dos atributos de restauranteOrigem pelos nomes dos campos que são passados no mapa
-			
-			System.out.println(nomePropriedade + " = " + valorPropriedade + " = " + novoValor);
-			
-			//Atribui na classe restauranteDestino, na propriedade obtida no field, o valor do campo obtido anteriormente com o getField
-			ReflectionUtils.setField(field, restauranteDestino, novoValor);
+			Restaurante restauranteOrigem = objectMapper.convertValue(dadosOrigem, Restaurante.class);//mapper que faz a conversão dos valores passados no json
+				
+			System.out.println(restauranteOrigem);
+				
+			dadosOrigem.forEach((nomePropriedade,valorPropriedade) -> {
+				Field field = ReflectionUtils.findField(Restaurante.class, nomePropriedade);//Busca a propriedade na classe Restaurante, pelo nome que vem no mapa
+				field.setAccessible(true);//modo de permitir o acesso a um atributo privado de outra classe, para que seja possível setar o valor com o método setField
+					
+				Object novoValor = ReflectionUtils.getField(field, restauranteOrigem);//Pega os valores dos atributos de restauranteOrigem pelos nomes dos campos que são passados no mapa
+					
+				System.out.println(nomePropriedade + " = " + valorPropriedade + " = " + novoValor);
+					
+				//Atribui na classe restauranteDestino, na propriedade obtida no field, o valor do campo obtido anteriormente com o getField
+				ReflectionUtils.setField(field, restauranteDestino, novoValor);
 		});
+		
+		} catch (IllegalArgumentException e) {
+			Throwable rootCause = ExceptionUtils.getRootCause(e);
+			throw new HttpMessageNotReadableException(e.getMessage(), rootCause, servletServerHttpRequest);
+		}
 		
 	}
 
