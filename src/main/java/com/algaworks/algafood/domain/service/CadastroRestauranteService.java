@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.algaworks.algafood.domain.exception.RestauranteNaoEncontradoException;
 import com.algaworks.algafood.domain.model.Cidade;
 import com.algaworks.algafood.domain.model.Cozinha;
+import com.algaworks.algafood.domain.model.FormaPagamento;
 import com.algaworks.algafood.domain.model.Restaurante;
 import com.algaworks.algafood.domain.repository.RestauranteRepository;
 
@@ -23,7 +24,8 @@ public class CadastroRestauranteService {
 	@Autowired
 	private CadastroCidadeService cadastroCidade;
 	
-	
+	@Autowired
+	private CadastroFormaPagamentoService cadastroFormaPagamento;
 	
 	@Transactional
 	public Restaurante salvar(Restaurante restaurante) {
@@ -38,6 +40,29 @@ public class CadastroRestauranteService {
 		
 		return restauranteRepository.save(restaurante);
 	}
+	
+	@Transactional
+	public void desassociarFormaPagamento(Long restauranteId, Long formaPagamentoId) {
+		Restaurante restaurante = buscarOuFalhar(restauranteId);
+		FormaPagamento formaPagamento = cadastroFormaPagamento.buscarOuFalhar(formaPagamentoId);
+		
+		 // Não precisa usar métodos de exclusão do banco, pois com a anotacão Transactional
+		 // após remover a formaPagamento da coleção o JPA irá sincronizar com o banco de dados
+		restaurante.removerFormaPagamento(formaPagamento);
+		
+	}
+	
+	@Transactional
+	public void associarFormaPagamento(Long restauranteId, Long formaPagamentoId) {
+		Restaurante restaurante = buscarOuFalhar(restauranteId);
+		FormaPagamento formaPagamento = cadastroFormaPagamento.buscarOuFalhar(formaPagamentoId);
+		
+		 // Não precisa usar métodos de adição do banco, pois com a anotacão Transactional
+		 // após adicionar a formaPagamento na coleção o JPA irá sincronizar com o banco de dados
+		restaurante.adicionarFormaPagamento(formaPagamento);
+		
+	}
+	
 	
 	public Restaurante buscarOuFalhar(Long restauranteId) {
 		return restauranteRepository.findById(restauranteId).
