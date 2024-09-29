@@ -21,6 +21,7 @@ public class CadastroGrupoService {
 	@Autowired
 	private GrupoRepository grupoRepository;
 	
+	@Autowired
 	private CadastroPermissaoService cadastroPermissao;
 	
 	

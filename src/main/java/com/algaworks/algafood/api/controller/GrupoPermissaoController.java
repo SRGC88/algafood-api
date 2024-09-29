@@ -44,7 +44,7 @@ public class GrupoPermissaoController {
 	
 	@PutMapping("/{permissaoId}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void associarPermissao(@PathVariable Long grupoId, @PathVariable Long permissaoId) {
+	public void associar(@PathVariable Long grupoId, @PathVariable Long permissaoId) {
 		cadastroGrupo.associarPermissao(grupoId, permissaoId);	
 	}
 
