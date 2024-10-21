@@ -5,6 +5,7 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -74,24 +75,18 @@ public class Pedido {
 	@ManyToOne
 	private Usuario cliente;
 	
-	@OneToMany(mappedBy = "pedido")
+	@OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL) //com o cascade é possível inserir os itens do pedido no momento de salvar o pedido
 	private List<ItemPedido> itens = new ArrayList<>();
 
 	
 	
 	public void calcularValorTotal() {
-		this.subtotal = getItens().stream()
-				.map(item -> item.getPrecoTotal())
-				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		getItens().forEach(ItemPedido::calcularPrecoTotal); //itera sobre cada instância de ItemPedido e calcula o PrecoTotal.
+		
+		this.subtotal = getItens().stream() //Cria um fluxo (Stream) de itens do pedido, permitindo processamento funcional sobre os dados.
+				.map(item -> item.getPrecoTotal()) //para cada item obtém o precoTotal calculado anteriormente
+				.reduce(BigDecimal.ZERO, BigDecimal::add); // soma cada preco a variavel subtotal
 		
 		this.valorTotal = this.subtotal.add(this.taxaFrete);
-	}
-	
-	public void definirFrete() {
-		setTaxaFrete(getRestaurante().getTaxaFrete());
-	}
-	
-	public void atribuirPedidosAosItens() {
-		getItens().forEach(item -> item.setPedido(this));
 	}
 }
