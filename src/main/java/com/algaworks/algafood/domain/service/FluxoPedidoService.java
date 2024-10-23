@@ -24,16 +24,24 @@ public class FluxoPedidoService {
 	public void confirmar(Long pedidoId) {
 		Pedido pedido = emissaoPedido.buscarOuFalhar(pedidoId);
 		
-		if (!pedido.getStatus().equals(StatusPedido.CRIADO)) {
-			throw new NegocioException(
-					String.format("Status do pedido %d não pode ser alterado de %s para %s",
-							pedido.getId(), 
-							pedido.getStatus().getDescricao(), 
-							StatusPedido.CONFIRMADO.getDescricao()));
-		}
+		pedido.confirmar();
 		
-		pedido.setStatus(StatusPedido.CONFIRMADO);
-		pedido.setDataConfirmacao(OffsetDateTime.now());
 	}
-
+	
+	//de confirmado para entregue - para o pedido ser entregue ele precisa estar no status confirmado
+	@Transactional
+	public void entregar(Long pedidoId) {
+		Pedido pedido = emissaoPedido.buscarOuFalhar(pedidoId);
+		
+		pedido.entregar();
+	}
+	
+	
+	//de entregue para cancelado - para ser cancelado precisa estar no status criado
+	@Transactional
+	public void cancelar(Long pedidoId) {
+		Pedido pedido = emissaoPedido.buscarOuFalhar(pedidoId);
+		
+		pedido.cancelar();
+	}
 }
