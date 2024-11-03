@@ -1,14 +1,10 @@
 package com.algaworks.algafood.domain.service;
 
-import java.time.OffsetDateTime;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.algaworks.algafood.domain.exception.NegocioException;
 import com.algaworks.algafood.domain.model.Pedido;
-import com.algaworks.algafood.domain.model.StatusPedido;
 
 @Service
 public class FluxoPedidoService {
@@ -21,8 +17,8 @@ public class FluxoPedidoService {
 	
 	
 	@Transactional
-	public void confirmar(Long pedidoId) {
-		Pedido pedido = emissaoPedido.buscarOuFalhar(pedidoId);
+	public void confirmar(String codigoPedido) {
+		Pedido pedido = emissaoPedido.buscarOuFalhar(codigoPedido);
 		
 		pedido.confirmar();
 		
@@ -30,8 +26,8 @@ public class FluxoPedidoService {
 	
 	//de confirmado para entregue - para o pedido ser entregue ele precisa estar no status confirmado
 	@Transactional
-	public void entregar(Long pedidoId) {
-		Pedido pedido = emissaoPedido.buscarOuFalhar(pedidoId);
+	public void entregar(String codigoPedido) {
+		Pedido pedido = emissaoPedido.buscarOuFalhar(codigoPedido);
 		
 		pedido.entregar();
 	}
@@ -39,8 +35,8 @@ public class FluxoPedidoService {
 	
 	//de entregue para cancelado - para ser cancelado precisa estar no status criado
 	@Transactional
-	public void cancelar(Long pedidoId) {
-		Pedido pedido = emissaoPedido.buscarOuFalhar(pedidoId);
+	public void cancelar(String codigoPedido) {
+		Pedido pedido = emissaoPedido.buscarOuFalhar(codigoPedido);
 		
 		pedido.cancelar();
 	}

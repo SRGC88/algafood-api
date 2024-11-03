@@ -43,6 +43,8 @@ public class PedidoController {
 	private PedidoInputDisassembler pedidoInputDisassembler; 
 	
 	
+	
+	
 	@GetMapping
 	public List<PedidoResumoModel> listar() {
 		List<Pedido> pedidos = emissaoPedido.listar();
@@ -50,9 +52,9 @@ public class PedidoController {
 		return pedidoResumoModelAssembler.toCollectionModel(pedidos);
 	}
 	
-	@GetMapping("/{pedidoId}")
-	public PedidoModel buscar(@PathVariable Long pedidoId) {
-		Pedido pedido = emissaoPedido.buscarOuFalhar(pedidoId);
+	@GetMapping("/{codigoPedido}")
+	public PedidoModel buscar(@PathVariable String codigoPedido) {
+		Pedido pedido = emissaoPedido.buscarOuFalhar(codigoPedido);
 		
 		return pedidoModelAssembler.toModel(pedido);
 	}
