@@ -15,9 +15,12 @@ public class PedidoSpecs {
 		return (root, query, builder) -> {
 			//uso do fetch para evitar o problema do n+1 do jpa,
 			//pois a cada consulta de pedido são feitas consultas em restaurante, cozinha e cliente
-			root.fetch("restaurante").fetch("cozinha"); //um restaurante tem uma cozinha
-			root.fetch("cliente");
-			root.fetch("enderecoEntrega").fetch("cidade").fetch("estado");
+			if(Pedido.class.equals(query.getResultType())){
+				root.fetch("restaurante").fetch("cozinha"); //um restaurante tem uma cozinha
+				root.fetch("cliente");
+				root.fetch("enderecoEntrega").fetch("cidade").fetch("estado");
+			}
+			
 		
 			
 			var predicates = new ArrayList<Predicate>();
