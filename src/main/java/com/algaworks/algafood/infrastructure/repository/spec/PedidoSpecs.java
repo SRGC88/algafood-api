@@ -6,8 +6,8 @@ import javax.persistence.criteria.Predicate;
 
 import org.springframework.data.jpa.domain.Specification;
 
+import com.algaworks.algafood.domain.filter.PedidoFilter;
 import com.algaworks.algafood.domain.model.Pedido;
-import com.algaworks.algafood.domain.repository.filter.PedidoFilter;
 
 public class PedidoSpecs {
 	
@@ -15,7 +15,7 @@ public class PedidoSpecs {
 		return (root, query, builder) -> {
 			//uso do fetch para evitar o problema do n+1 do jpa,
 			//pois a cada consulta de pedido são feitas consultas em restaurante, cozinha e cliente
-			if(Pedido.class.equals(query.getResultType())){
+			if(Pedido.class.equals(query.getResultType())){ //se a consulta for de Pedido
 				root.fetch("restaurante").fetch("cozinha"); //um restaurante tem uma cozinha
 				root.fetch("cliente");
 				root.fetch("enderecoEntrega").fetch("cidade").fetch("estado");
