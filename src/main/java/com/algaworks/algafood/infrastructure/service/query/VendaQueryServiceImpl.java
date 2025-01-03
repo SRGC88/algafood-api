@@ -69,5 +69,14 @@ public class VendaQueryServiceImpl implements VendaQueryService {
 		return manager.createQuery(query).getResultList();
 	}
 	
-
 }
+
+	/*
+	Query:
+	select date(convert_tz(p.data_criacao, '+00:00', '-03:00')) as data_criacao,
+	  count(p.id) as total_vendas,
+	  sum(p.valor_total) as total_faturado
+	from pedido p
+	where p.status in ('CONFIRMADO', 'ENTREGUE')
+	group by date(convert_tz(p.data_criacao, '+00:00', '-03:00'))
+	*/
