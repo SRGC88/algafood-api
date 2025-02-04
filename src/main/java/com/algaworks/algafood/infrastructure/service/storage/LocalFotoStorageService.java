@@ -34,12 +34,24 @@ import com.algaworks.algafood.domain.service.FotoStorageService;
 			
 		}
 		
+		@Override
+		public void remover(String nomeArquivo) {
+			Path arquivoPath = getArquivoPath(nomeArquivo);
+			
+			try {
+				Files.deleteIfExists(arquivoPath);
+			} catch (Exception e) {
+				throw new StorageException("Não foi possível excluir o arquivo.", e);
+			}
+			
+		}
+		
 		//Concatena o diretório da foto com o nome do arquivo
 		//Para formar o caminho completo onde a foto será armazenada
-		
 		private Path getArquivoPath(String nomeArquivo) {
 			return diretoriosFoto.resolve(Path.of(nomeArquivo));
 			
 		}
+
 
 }
