@@ -64,6 +64,4 @@ import com.algaworks.algafood.domain.service.FotoStorageService;
 				throw new StorageException("Não foi possível recuperar o arquivo", e);
 			}
 		}
-
-
 }
