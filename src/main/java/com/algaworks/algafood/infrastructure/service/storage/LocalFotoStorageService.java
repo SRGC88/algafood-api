@@ -1,5 +1,6 @@
 package com.algaworks.algafood.infrastructure.service.storage;
 
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -51,6 +52,17 @@ import com.algaworks.algafood.domain.service.FotoStorageService;
 		private Path getArquivoPath(String nomeArquivo) {
 			return diretoriosFoto.resolve(Path.of(nomeArquivo));
 			
+		}
+
+		@Override
+		public InputStream recuperar(String nomeArquivo) {
+			try {
+				Path arquivoPath = getArquivoPath(nomeArquivo);
+				
+				return Files.newInputStream(arquivoPath);
+			} catch (Exception e) {
+				throw new StorageException("Não foi possível recuperar o arquivo", e);
+			}
 		}
 
 
