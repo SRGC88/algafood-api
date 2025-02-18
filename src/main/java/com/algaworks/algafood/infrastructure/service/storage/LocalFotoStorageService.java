@@ -13,7 +13,7 @@ import com.algaworks.algafood.core.storage.StorageProperties;
 import com.algaworks.algafood.domain.service.FotoStorageService;
 
 	
-	@Service
+	//@Service
 	public class LocalFotoStorageService implements FotoStorageService {
 			
 		@Autowired
