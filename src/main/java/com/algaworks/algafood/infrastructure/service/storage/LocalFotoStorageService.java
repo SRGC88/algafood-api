@@ -4,18 +4,20 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
 
+import com.algaworks.algafood.core.storage.StorageProperties;
 import com.algaworks.algafood.domain.service.FotoStorageService;
 
 	
 	@Service
 	public class LocalFotoStorageService implements FotoStorageService {
 			
-		@Value("${algafood.storage.local.diretorio-fotos}")
-		private Path diretoriosFoto;
+		@Autowired
+		private StorageProperties storageProperties;
 	
 		
 		
@@ -50,7 +52,7 @@ import com.algaworks.algafood.domain.service.FotoStorageService;
 		//Concatena o diretório da foto com o nome do arquivo
 		//Para formar o caminho completo onde a foto será armazenada
 		private Path getArquivoPath(String nomeArquivo) {
-			return diretoriosFoto.resolve(Path.of(nomeArquivo));
+			return storageProperties.getLocal().getDiretorioFotos().resolve(Path.of(nomeArquivo));
 			
 		}
 
