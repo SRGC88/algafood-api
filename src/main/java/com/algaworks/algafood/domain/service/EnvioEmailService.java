@@ -14,8 +14,13 @@ public interface EnvioEmailService {
 	@Builder
 	class Mensagem {
 		
+		//@Singular
 		private Set<String> destinatarios;
+		
+		//@NonNull
 		private String assunto;
+		
+		//@NonNull
 		private String corpo;
 		
 	}
